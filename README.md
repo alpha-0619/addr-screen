@@ -21,12 +21,12 @@ The default two sources (OFAC + GoPlus) need no API key and cover the common cas
 ## Install
 
 ```bash
-git clone https://github.com/<your-handle>/addr-screen
+git clone https://github.com/alpha-0619/addr-screen
 cd addr-screen
 python check.py --address <TRON_ADDRESS>
 ```
 
-Python 3.10+. Standard library plus `requests`.
+Python 3.10+. Standard library only — no third-party packages.
 
 ## Usage
 
