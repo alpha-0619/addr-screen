@@ -84,12 +84,26 @@ def check(address: str) -> dict:
         }
 
     hit = address in addrs
+
+    # 名單過期又抓不到新的時,「沒命中」只代表這份舊名單裡沒有,
+    # 不代表現在乾淨。缺資訊不算安全,所以降成 WARN 而不是 ALLOW。
+    # 命中就是命中,舊名單上的制裁地址照樣 BLOCK。
+    if hit:
+        decision = "BLOCK"
+        flags = ["OFAC SDN 制裁名單"]
+    elif warn:
+        decision = "WARN"
+        flags = ["OFAC 名單已過期,這次的「沒命中」不算數"]
+    else:
+        decision = "ALLOW"
+        flags = []
+
     result = {
         "source": "ofac",
-        "decision": "BLOCK" if hit else "ALLOW",
-        "flags": ["OFAC SDN 制裁名單"] if hit else [],
+        "decision": decision,
+        "flags": flags,
         "error": warn,  # 即使用了過期 cache 也標出來
-        "raw": {"list_size": len(addrs), "hit": hit},
+        "raw": {"list_size": len(addrs), "hit": hit, "stale": bool(warn)},
     }
     return result
 
